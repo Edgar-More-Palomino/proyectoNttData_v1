@@ -1,0 +1,160 @@
+openapi: "3.0.1"
+info:
+  title: Customer Service API
+  description: API para gestionar clientes.
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080
+    description: Servidor local
+tags:
+  - name: Customers
+    description: gestión de clientes
+paths:
+  /api/v1/customers:
+    post:
+      tags:
+        - Customers
+      summary: Crear un cliente nuevo
+      operationId: save
+      requestBody:
+        description: Detalles del cliente
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CustomerRequest"
+      responses:
+        '201':
+          description: Cliente creado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CustomerResponse"
+    get:
+      tags:
+        - Customers
+      summary: Listar todos los clientes
+      operationId: findAll
+      responses:
+        '200':
+          description: Demuestra Listado Clientes
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListCustomerResponse"
+
+  /api/v1/customers/{id}:  
+    put:
+      tags:
+        - Customers
+      summary: Actualizar los datos de un cliente.
+      operationId: update
+      parameters:
+        - $ref: '#/components/parameters/customerId'
+      requestBody:
+        description: Detalles del cliente
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CustomerRequest"
+      responses:
+        '200':
+          description: Demuestra Listado Clientes actualizados
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CustomerResponse"
+    get:
+      tags:
+        - Customers
+      summary: Obtener detalles de un cliente por su ID.
+      operationId: findById
+      parameters:
+        - $ref: '#/components/parameters/customerId'
+      responses:
+        '200':
+          description: Informacion de un Cliente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CustomerResponse"
+    delete:
+      tags:
+        - Customers
+      summary: Eliminar un cliente
+      operationId: delete
+      parameters:
+        - $ref: '#/components/parameters/customerId'
+      responses:
+        '200':
+          description: Elimina un Cliente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CustomerResponse"  
+
+components:
+  parameters:
+    customerId:
+      name: id
+      in: path
+      description: ID único del cliente
+      required: true
+      schema:
+        type: integer
+        minimum: 1
+  schemas:
+    
+    CustomerRequest:
+      required:
+        - nombre
+        - apellido
+        - dni
+        - email
+      type: object
+      properties:
+        nombre:
+          type: string
+          description: nombre cliente
+        apellido:
+          type: string
+          description: apellido cliente
+        dni: 
+          type: string
+          description: dni cliente
+        email:
+          type: string
+          minLength: 5
+          maxLength: 60
+          pattern: '[a-zA-Z0-9.*%±]+@[a-zA-Z0-9.-]+.[a-zA-Z]{2,}'
+          description: email cliente
+
+    ListCustomerResponse:
+      type: object
+      properties:
+        listCustomerResponse:
+          type: array
+          minItems: 0
+          description: listado de Clientes
+          items:
+            $ref: '#/components/schemas/CustomerResponse'
+
+    CustomerResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: ID único del cliente
+        nombre:
+          type: string
+          description: nombre cliente
+        apellido:
+          type: string
+          description: apellido cliente
+        dni: 
+          type: string
+          description: dni cliente
+        email:
+          type: string
+          description: email cliente
